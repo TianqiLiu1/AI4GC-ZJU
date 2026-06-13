@@ -8,7 +8,9 @@
   },
   "scripts": {
     "dev": "next dev --webpack",
+    "dev:proxy": "NODE_USE_ENV_PROXY=1 next dev --webpack",
     "build": "next build --webpack",
+    "build:proxy": "NODE_USE_ENV_PROXY=1 next build --webpack",
     "dev:turbopack": "next dev --turbopack",
     "start": "next start",
     "build:turbopack": "next build --turbopack",
