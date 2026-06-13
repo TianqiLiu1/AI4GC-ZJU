@@ -22,6 +22,17 @@ function formatAuthor(author: BibAuthor): string {
   return parts.join(" ").trim();
 }
 
+function toAuthorList(authors: BibAuthor[] | string | undefined): string[] {
+  if (!authors) return [];
+  if (typeof authors === "string") {
+    return authors
+      .split(/\s+and\s+/i)
+      .map((name) => name.trim())
+      .filter(Boolean);
+  }
+  return authors.map(formatAuthor).filter(Boolean);
+}
+
 function formatAuthors(authors: BibAuthor[] | string | undefined): string {
   if (!authors) return "";
   if (typeof authors === "string") return authors;
@@ -90,7 +101,74 @@ function extractPublicationLinks(fields: Record<string, unknown>): LinkItem[] {
     links.push({ label: "Project", href: github, external: true });
   }
 
+  const blogHref = extractBlogHref(fields);
+  if (blogHref) {
+    links.push({ label: "Blog", href: blogHref, external: /^https?:\/\//i.test(blogHref) });
+  }
+
   return links;
+}
+
+/**
+ * Reads a related-blog reference from a BibTeX entry (`blog`/`blogurl`/`blogslug`).
+ * A bare value or `blog/...` becomes an internal `/blog/{slug}` link; full URLs pass through.
+ */
+export function extractBlogHref(fields: Record<string, unknown>): string | undefined {
+  const raw = firstNonEmptyField(fields, ["blog", "blogurl", "blogslug"]).trim();
+  if (!raw) {
+    return undefined;
+  }
+  if (/^https?:\/\//i.test(raw) || raw.startsWith("/")) {
+    return raw;
+  }
+  return `/blog/${raw.replace(/^blog\//i, "")}`;
+}
+
+function extractTopics(fields: Record<string, unknown>): string[] {
+  const raw = fields.keywords ?? fields.keyword ?? fields.topics;
+  if (!raw) {
+    return [];
+  }
+
+  // The parser may return keywords as a string or an array; handle both, then
+  // split each piece on , / ; so "Agents, RAG" and ["Agents","RAG"] both work.
+  const rawParts = Array.isArray(raw)
+    ? raw.map((value) => fieldToString(value))
+    : [fieldToString(raw)];
+
+  const seen = new Set<string>();
+  const topics: string[] = [];
+  for (const part of rawParts) {
+    for (const piece of part.split(/[;,]/)) {
+      const value = piece.trim();
+      const key = value.toLowerCase();
+      if (value && !seen.has(key)) {
+        seen.add(key);
+        topics.push(value);
+      }
+    }
+  }
+  return topics;
+}
+
+/** Re-serializes a parsed entry into a clean, copy-ready BibTeX string. */
+function toBibtex(entry: BibEntry): string {
+  const fields = entry.fields as Record<string, unknown>;
+  const type = (entry.type || "article").toLowerCase();
+  const lines = [`@${type}{${entry.key},`];
+
+  for (const [field, value] of Object.entries(fields)) {
+    const serialized =
+      field === "author" || field === "editor"
+        ? toAuthorList(value as BibAuthor[] | string | undefined).join(" and ")
+        : fieldToString(value).trim();
+    if (serialized) {
+      lines.push(`  ${field} = {${serialized}},`);
+    }
+  }
+
+  lines.push("}");
+  return lines.join("\n");
 }
 
 export function publicationFromBibEntry(entry: BibEntry): PublicationItem {
@@ -106,8 +184,12 @@ export function publicationFromBibEntry(entry: BibEntry): PublicationItem {
     id: entry.key,
     title,
     authors: formatAuthors(fields.author as BibAuthor[] | string | undefined),
+    authorList: toAuthorList(fields.author as BibAuthor[] | string | undefined),
     venue: year && !venue.includes(year) ? `${venue} ${year}`.trim() : venue,
     href: paperHref,
+    blogHref: extractBlogHref(fields),
+    topics: extractTopics(fields),
+    bibtex: toBibtex(entry),
     honor: honor ? normalizeHonorLabel(honor) : undefined,
     links,
   });

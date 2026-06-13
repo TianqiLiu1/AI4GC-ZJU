@@ -12,7 +12,7 @@ import {
   rewriteMemberBodyAssets,
   type TeamContentGroup,
 } from "@/lib/content/team-assets";
-import { parseMemberStartDate, resolveId } from "@/lib/content/slug";
+import { normalizeAuthorName, parseMemberStartDate, resolveId } from "@/lib/content/slug";
 import { resolveMemberEmail } from "@/lib/content/member-email";
 import type { MemberProfile, TeamContent, TeamMember } from "@/types/lab";
 import { resolveProfileBody } from "@/lib/content/resolve-profile-papers";
@@ -170,6 +170,23 @@ export function findTeamMemberByProfile(slug: string): TeamMember | null {
     listAllTeamMembers().find((member) => member.profile?.toLowerCase() === normalized) ??
     null
   );
+}
+
+/**
+ * Maps normalized member names → profile href (`/{slug}`) for members that publish a profile.
+ * Used to turn group-member authors on paper lists into links to their profiles.
+ */
+export function getMemberAuthorLinks(): Record<string, string> {
+  const links: Record<string, string> = {};
+
+  for (const member of listAllTeamMembers()) {
+    if (!member.profile) {
+      continue;
+    }
+    links[normalizeAuthorName(member.name)] = `/${member.profile}`;
+  }
+
+  return links;
 }
 
 export function findTeamMemberById(id: string): TeamMember | null {

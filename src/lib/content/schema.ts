@@ -48,9 +48,13 @@ export const publicationItemSchema = z.object({
   id: z.string(),
   title: z.string(),
   authors: z.string(),
+  authorList: z.array(z.string()).default([]),
   venue: z.string(),
   honor: z.string().optional(),
   href: z.string().optional(),
+  blogHref: z.string().optional(),
+  topics: z.array(z.string()).default([]),
+  bibtex: z.string().default(""),
   links: z.array(linkItemSchema).default([]),
 });
 
@@ -68,6 +72,16 @@ export const blogPostFrontmatterSchema = z.object({
   authorId: z.string().optional(),
   /** Multiple team member folder ids; merged with authorId when both are set. */
   authorIds: z.array(z.string()).optional(),
+  /** Prominent resource buttons rendered after the intro (paper / code / 小红书 / 微信公众号). */
+  links: z
+    .array(
+      z.object({
+        kind: z.enum(["paper", "code", "xiaohongshu", "wechat", "website"]),
+        href: z.string().min(1),
+        label: z.string().optional(),
+      }),
+    )
+    .default([]),
   tags: z.array(z.string()).default([]),
   cover: optionalImagePath,
   coverAlt: z
@@ -101,6 +115,15 @@ export const blogPostSchema = blogPostFrontmatterSchema
         profileHref: z.string().optional(),
       }),
     ),
+    links: z
+      .array(
+        z.object({
+          kind: z.enum(["paper", "code", "xiaohongshu", "wechat", "website"]),
+          href: z.string(),
+          label: z.string(),
+        }),
+      )
+      .default([]),
   });
 
 /** Shared team member frontmatter — PI and all groups use the same fields in *.md headers. */
@@ -338,6 +361,10 @@ export const siteConfigSchema = z.object({
   name: z.string().default("AI4GC Lab"),
   tagline: z.string().default(""),
   description: z.string().default(""),
+  /** Absolute production URL (e.g. https://ai4gc.zju.edu.cn); overridden by SITE_URL env. */
+  url: z.string().default(""),
+  /** When true, search engines may index the site (robots + page meta). Keep false until launch. */
+  indexable: z.boolean().default(false),
   logo: z.string().default("/content-assets/ai4gclab/logo.jpg"),
   schoolLogo: z.string().optional(),
   schoolName: z.string().default("Zhejiang University"),

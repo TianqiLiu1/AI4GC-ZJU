@@ -27,6 +27,11 @@ export function normalizeHonorLabel(value: string): string {
   return trimmed;
 }
 
+/** True for preprint venues (arXiv / CoRR / TechRxiv) — i.e. not formally published. */
+export function isPreprintVenue(venue: string): boolean {
+  return /\barxiv\b|\bcorr\b|techrxiv|preprint/i.test(venue);
+}
+
 export function getVenueBadge(venue: string): string | null {
   if (/oral/i.test(venue)) return "Oral";
   if (/highlight/i.test(venue)) return "Highlight";

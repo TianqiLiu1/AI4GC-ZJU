@@ -39,6 +39,15 @@ export type BlogAuthorRef = {
   profileHref?: string;
 };
 
+/** Prominent resource buttons shown near the top of a blog post. */
+export type BlogResourceKind = "paper" | "code" | "xiaohongshu" | "wechat" | "website";
+
+export type BlogResourceLink = {
+  kind: BlogResourceKind;
+  href: string;
+  label: string;
+};
+
 export type BlogPost = {
   id: string;
   title: string;
@@ -46,6 +55,7 @@ export type BlogPost = {
   desc: string;
   author?: string;
   authors: BlogAuthorRef[];
+  links: BlogResourceLink[];
   tags: string[];
   cover?: string;
   coverAlt?: string;
@@ -69,9 +79,17 @@ export type PublicationItem = {
   id: string;
   title: string;
   authors: string;
+  /** Individual author display names, in order — used to link group-member authors to profiles. */
+  authorList: string[];
   venue: string;
   honor?: string;
   href?: string;
+  /** Internal link to a related blog post (e.g. /blog/{slug}) when the BibTeX entry has a `blog` field. */
+  blogHref?: string;
+  /** Topic tags from the BibTeX `keywords` field, used for filtering. */
+  topics: string[];
+  /** Clean re-serialized BibTeX entry for the "Copy BibTeX" button. */
+  bibtex: string;
   links: LinkItem[];
 };
 
@@ -227,6 +245,8 @@ export type SiteConfig = {
   name: string;
   tagline: string;
   description: string;
+  url: string;
+  indexable: boolean;
   logo: string;
   schoolLogo?: string;
   schoolName: string;

@@ -14,6 +14,7 @@ const samplePost: BlogPost = {
   desc: "Serving notes",
   author: "Yurun Chen",
   authors: [{ id: "yurun-chen-2025-12551024", name: "Yurun Chen", profileHref: "/yurun-chen-2025-12551024" }],
+  links: [],
   tags: ["LLM Systems"],
   body: "Body",
 };

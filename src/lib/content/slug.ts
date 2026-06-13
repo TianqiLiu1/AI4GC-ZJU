@@ -24,6 +24,20 @@ export function memberSlug(name: string): string {
   return slugify(name.replace(/\./g, ""));
 }
 
+/**
+ * Normalizes a person name for matching BibTeX author names against team members.
+ * Lowercases, strips diacritics and periods, and collapses whitespace.
+ */
+export function normalizeAuthorName(name: string): string {
+  return name
+    .normalize("NFKD")
+    .replace(/[̀-ͯ]/g, "")
+    .replace(/\./g, "")
+    .toLowerCase()
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 export function memberDateSlug(startDate: string): string {
   const trimmed = startDate.trim();
   const yearMatch = trimmed.match(/\b(19|20)\d{2}\b/);

@@ -8,6 +8,7 @@ import type { ProfileBodySegment } from "@/lib/content/resolve-profile-papers";
 type MemberMarkdownProps = {
   segments: ProfileBodySegment[];
   githubStars?: GitHubStarsMap;
+  authorLinks?: Record<string, string>;
   variant?: "pi" | "member";
 };
 
@@ -26,6 +27,7 @@ function segmentKey(segment: ProfileBodySegment): string {
 export default function MemberMarkdown({
   segments,
   githubStars,
+  authorLinks,
   variant = "member",
 }: MemberMarkdownProps) {
   return (
@@ -69,6 +71,7 @@ export default function MemberMarkdown({
                   pub={pub}
                   variant="profile"
                   githubStars={githubStars}
+                  authorLinks={authorLinks}
                 />
               ))}
             </div>

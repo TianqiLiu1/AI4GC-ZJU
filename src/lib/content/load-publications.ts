@@ -14,3 +14,12 @@ export function loadPublications(): PublicationItem[] {
 
   return sortPublicationsByYear(loadPublicationsFromBibFile(bibPath));
 }
+
+/**
+ * Reverse of the paper→blog link: finds the global publication whose `blog` field
+ * points at this blog post, so the post can show a "Related paper" link.
+ */
+export function getRelatedPaperForBlog(slug: string): PublicationItem | null {
+  const target = `/blog/${slug.replace(/^\//, "").toLowerCase()}`;
+  return loadPublications().find((pub) => pub.blogHref?.toLowerCase() === target) ?? null;
+}
