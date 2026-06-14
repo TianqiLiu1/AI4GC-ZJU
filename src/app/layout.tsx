@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { headers } from "next/headers";
-import { IBM_Plex_Mono, Source_Sans_3, Source_Serif_4 } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import SiteFooter from "@/components/site/SiteFooter";
@@ -8,21 +8,25 @@ import JsonLd from "@/components/site/JsonLd";
 import { getSiteConfig } from "@/lib/content";
 import { absoluteUrl, getSiteUrl } from "@/lib/site/site-url";
 
-const sourceSerif = Source_Serif_4({
-  subsets: ["latin"],
+const sourceSerif = localFont({
+  src: "./fonts/source-serif-4.woff2",
+  weight: "200 900",
   variable: "--font-display",
   display: "swap",
 });
 
-const sourceSans = Source_Sans_3({
-  subsets: ["latin"],
+const sourceSans = localFont({
+  src: "./fonts/source-sans-3.woff2",
+  weight: "200 900",
   variable: "--font-body",
   display: "swap",
 });
 
-const ibmPlexMono = IBM_Plex_Mono({
-  subsets: ["latin"],
-  weight: ["400", "500"],
+const ibmPlexMono = localFont({
+  src: [
+    { path: "./fonts/ibm-plex-mono-400.woff2", weight: "400", style: "normal" },
+    { path: "./fonts/ibm-plex-mono-500.woff2", weight: "500", style: "normal" },
+  ],
   variable: "--font-mono",
   display: "swap",
 });
