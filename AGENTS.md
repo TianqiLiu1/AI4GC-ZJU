@@ -35,12 +35,12 @@ Optional `.env.local` (see `.env.example`):
 
 | Concern | Location |
 | --- | --- |
-| Disallow crawlers | `src/app/robots.ts` (`Disallow: /`) |
-| Page-level noindex | `src/app/layout.tsx` → `generateMetadata().robots` |
+| Crawler policy (site-wide) | `content/site.yaml` → `indexable` drives `src/app/robots.ts` + `src/app/layout.tsx` → `generateMetadata().robots` |
+| Per-page noindex | member frontmatter `noindex: true` → `src/app/[slug]/page.tsx` robots + excluded from `src/app/sitemap.ts` |
 | Security headers (HSTS, CSP, etc.) | `src/lib/security/headers.ts`, wired in `next.config.ts` |
 | Member/blog asset serving | `src/app/team-assets/`, `src/app/blog-assets/` — path traversal + MIME allowlist |
 
-Site is intentionally **noindex** today. Re-enable indexing by updating `robots.ts` and layout metadata.
+Indexing is controlled by `content/site.yaml` → `indexable` (currently **true**). When true, `robots.ts` allows crawling and emits the sitemap, and pages drop the noindex meta. Individual member profiles can still opt out with frontmatter `noindex: true` (used for the template/placeholder profiles).
 
 ## Content layout (source of truth)
 

@@ -39,6 +39,18 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     title: profile.member.name,
     description: profile.member.bio,
     alternates: { canonical },
+    // Force per-page noindex for opt-out profiles (e.g. templates), even when
+    // the site is indexable. Otherwise inherit the site-wide robots policy.
+    ...(profile.member.noindex
+      ? {
+          robots: {
+            index: false,
+            follow: false,
+            nocache: true,
+            googleBot: { index: false, follow: false, noimageindex: true },
+          },
+        }
+      : {}),
     openGraph: {
       type: "profile",
       title: `${profile.member.name} | ${site.name}`,

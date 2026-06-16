@@ -105,6 +105,8 @@ export type TeamMember = {
   startDate?: string;
   order?: number;
   profile?: string;
+  /** Keep this profile out of search engines (per-page noindex + excluded from sitemap). */
+  noindex?: boolean;
   tags?: string[];
   email?: string;
   links: MemberLink[];

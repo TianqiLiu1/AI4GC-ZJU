@@ -13,8 +13,13 @@ const SHARED_SECURITY_HEADERS: SecurityHeader[] = [
     value: "camera=(), microphone=(), geolocation=(), interest-cohort=()",
   },
   { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
-  { key: "X-Robots-Tag", value: "noindex, nofollow, noarchive, nosnippet" },
 ];
+
+// NOTE: indexing is controlled by `content/site.yaml` → `indexable`, applied via
+// robots.txt (src/app/robots.ts) and per-page robots meta (layout + [slug]).
+// We intentionally do NOT set an `X-Robots-Tag: noindex` response header here:
+// a hardcoded one previously overrode the per-page meta and made search engines
+// refuse to index even when indexing was enabled.
 
 const PRODUCTION_SECURITY_HEADERS: SecurityHeader[] = [
   {

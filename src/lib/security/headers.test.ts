@@ -6,12 +6,16 @@ describe("getSecurityHeaders", () => {
     vi.unstubAllEnvs();
   });
 
-  it("includes crawler and clickjacking protections in all environments", () => {
+  it("includes clickjacking protections in all environments", () => {
     const keys = getSecurityHeaders().map((header) => header.key);
 
-    expect(keys).toContain("X-Robots-Tag");
     expect(keys).toContain("X-Frame-Options");
     expect(keys).toContain("X-Content-Type-Options");
+  });
+
+  it("does not set a site-wide X-Robots-Tag noindex header (indexing is robots.txt/meta-driven)", () => {
+    const keys = getSecurityHeaders().map((header) => header.key);
+    expect(keys).not.toContain("X-Robots-Tag");
   });
 
   it("adds HSTS and CSP only in production", () => {

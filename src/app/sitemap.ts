@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 import { listBlogPostSlugs } from "@/lib/content/load-blog";
-import { listMemberProfileSlugs } from "@/lib/content/load-team";
+import { listIndexableMemberProfileSlugs } from "@/lib/content/load-team";
 import { getSiteUrl } from "@/lib/site/site-url";
 
 export default function sitemap(): MetadataRoute.Sitemap {
@@ -8,7 +8,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
 
   const staticPaths = ["/", "/news", "/publications", "/team", "/blog"];
-  const profilePaths = listMemberProfileSlugs().map((slug) => `/${slug}`);
+  const profilePaths = listIndexableMemberProfileSlugs().map((slug) => `/${slug}`);
   const blogPaths = listBlogPostSlugs().map((slug) => `/blog/${slug}`);
 
   return [...staticPaths, ...profilePaths, ...blogPaths].map((path) => ({

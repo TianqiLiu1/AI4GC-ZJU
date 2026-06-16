@@ -86,6 +86,7 @@ function loadMemberFile(
     id,
     startDate,
     profile,
+    noindex: parsed.noindex,
     tags: parsed.tags,
     email,
     links,
@@ -202,6 +203,14 @@ export function listMemberProfileSlugs(): string[] {
   return loadAllMemberFiles()
     .map(({ member }) => member.profile)
     .filter((profile): profile is string => Boolean(profile))
+    .sort();
+}
+
+/** Published profile slugs that opt into search-engine indexing (excludes `noindex` members). */
+export function listIndexableMemberProfileSlugs(): string[] {
+  return loadAllMemberFiles()
+    .filter(({ member }) => member.profile && !member.noindex)
+    .map(({ member }) => member.profile as string)
     .sort();
 }
 

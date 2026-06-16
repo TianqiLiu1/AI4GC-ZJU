@@ -141,6 +141,8 @@ export const teamMemberFrontmatterSchema = z.object({
   order: z.number().optional(),
   /** When true, publish a profile page at /{member-folder}. Folder name is the canonical slug. */
   profile: z.boolean().optional(),
+  /** When true, keep the profile out of search engines (per-page noindex + excluded from sitemap), even when the site is indexable. Useful for template/placeholder profiles. */
+  noindex: z.boolean().optional(),
   /** Optional override for member id (defaults to member folder name). */
   id: z.string().optional(),
   /** Topic labels shown on profile intro and team card. */
@@ -165,6 +167,7 @@ export const teamMemberSchema = teamMemberFrontmatterSchema
     tags: true,
     email: true,
     links: true,
+    noindex: true,
   })
   .extend({
     id: z.string(),

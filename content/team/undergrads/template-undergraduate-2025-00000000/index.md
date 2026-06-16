@@ -9,6 +9,7 @@ tags:
   - Vibe Coding
 email: you@example.com
 profile: true
+noindex: true  # 模板示例：不被搜索引擎收录；改成你自己的内容后删掉此行
 links:
   - label: GitHub
     href: https://github.com/

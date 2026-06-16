@@ -116,11 +116,11 @@ Optional: copy [`.env.example`](.env.example) to `.env.local` and set `GITHUB_TO
 ### Production & security
 
 - **Content:** file-based only — no database; optional admin writes the same files under `content/`.
-- **Crawlers:** `src/app/robots.ts` disallows all bots; root layout metadata and `X-Robots-Tag` also set `noindex`.
+- **Crawlers:** controlled by `content/site.yaml` → `indexable`. When `true`, `src/app/robots.ts` allows crawling and emits the sitemap; when `false`, all bots are disallowed and pages set `noindex`. Individual member profiles can opt out via frontmatter `noindex: true`.
 - **HTTP headers:** production responses include HSTS, CSP, and baseline hardening via `src/lib/security/headers.ts` and `next.config.ts`.
 - **Asset routes:** `/content-assets/`, `/home-assets/`, `/team-assets/`, and `/blog-assets/` validate paths and MIME types before serving files from `content/`.
 
-To allow search indexing later, revert `robots.ts` and remove `robots` from `src/app/layout.tsx`.
+To toggle search indexing, set `content/site.yaml` → `indexable` (drives both `robots.ts` and per-page robots metadata).
 
 One-time migration scripts (legacy): `scripts/migrate-content.mjs`, `scripts/migrate-team-to-md.mjs`, `scripts/migrate-team-to-folders.mjs`.
 
